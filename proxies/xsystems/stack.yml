@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  xsystems-proxy:
+    image: "xsystems/xsystems-proxy:latest"
+    deploy:
+      placement:
+          constraints:
+            - "node.role == manager"
+    environment:
+      CF_DNS_API_TOKEN_FILE: "/run/secrets/xsystems-proxy_cf-dns-api-token"
+    secrets:
+      - "xsystems-proxy_cf-dns-api-token"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "acme:/etc/acme"
+    networks:
+      - "cryptocurrency_network"
+      - "windhappers_network"
+    dns:
+      - "1.1.1.1"
+      - "8.8.8.8"
+
+
+secrets:
+  xsystems-proxy_cf-dns-api-token:
+    external: true
+
+
+volumes:
+  acme:
+
+
+networks:
+  cryptocurrency_network:
+    external: true
+  windhappers_network:
+    external: true

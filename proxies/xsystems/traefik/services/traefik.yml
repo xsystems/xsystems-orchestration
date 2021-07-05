@@ -1,0 +1,8 @@
+http:
+  routers:
+    traefik:
+      entrypoints: "websecure"
+      service: "api@internal"
+      rule: "Host(`traefik.xsystems.org`)"
+      tls:
+        certresolver: "xsystems"

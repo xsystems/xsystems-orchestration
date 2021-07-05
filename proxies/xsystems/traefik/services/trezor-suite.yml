@@ -1,0 +1,13 @@
+http:
+  routers:
+    trezor-suite:
+      entrypoints: "websecure"
+      service: "trezor-suite"
+      rule: "Host(`wallet.xsystems.org`)"
+      tls:
+        certresolver: "xsystems"
+  services:
+    trezor-suite:
+      loadbalancer:
+        servers:
+          - url: "http://trezor-suite:80"

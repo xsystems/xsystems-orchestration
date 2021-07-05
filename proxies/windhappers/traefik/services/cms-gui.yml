@@ -1,0 +1,13 @@
+http:
+  routers:
+    cms-gui:
+      entrypoints: "websecure"
+      service: "cms-gui"
+      rule: "Host(`{{ env "CMS_GUI_DOMAIN" }}`)"
+      tls:
+        certresolver: "windhappers"
+  services:
+    cms-gui:
+      loadbalancer:
+        servers:
+          - url: "http://cms-gui:80"

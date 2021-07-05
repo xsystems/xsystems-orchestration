@@ -1,0 +1,13 @@
+http:
+  routers:
+    blockbook:
+      entrypoints: "websecure"
+      service: "blockbook"
+      rule: "Host(`blockbook.xsystems.org`)"
+      tls:
+        certresolver: "xsystems"
+  services:
+    blockbook:
+      loadbalancer:
+        servers:
+          - url: "http://blockbook:9130"

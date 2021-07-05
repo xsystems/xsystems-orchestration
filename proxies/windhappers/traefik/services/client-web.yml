@@ -1,0 +1,13 @@
+http:
+  routers:
+    client-web:
+      entrypoints: "websecure"
+      service: "client-web"
+      rule: "Host(`{{ env "CLIENT_WEB_DOMAIN" }}`)"
+      tls:
+        certresolver: "windhappers"
+  services:
+    client-web:
+      loadbalancer:
+        servers:
+          - url: "http://client-web:80"

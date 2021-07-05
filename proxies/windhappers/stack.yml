@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  windhappers-proxy:
+    image: "xsystems/windhappers-proxy:latest"
+    deploy:
+      placement:
+          constraints:
+            - "node.role == manager"
+    environment:
+      - CF_DNS_API_TOKEN_FILE=/run/secrets/windhappers-proxy_cf-dns-api-token
+      - CLIENT_WEB_DOMAIN
+      - CMS_API_DOMAIN
+      - CMS_GUI_DOMAIN
+    secrets:
+      - "windhappers-proxy_cf-dns-api-token"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "acme:/etc/acme"
+    networks:
+      - "windhappers_network"
+
+
+secrets:
+  windhappers-proxy_cf-dns-api-token:
+    external: true
+
+
+volumes:
+  acme:
+
+
+networks:
+  windhappers_network:
+    external: true

@@ -1,0 +1,13 @@
+http:
+  routers:
+    windhappers-cms-api:
+      entrypoints: "websecure"
+      service: "windhappers-cms-api"
+      rule: "Host(`api.acc.windhappers.nl`)"
+      tls:
+        certresolver: "xsystems"
+  services:
+    windhappers-cms-api:
+      loadbalancer:
+        servers:
+          - url: "http://cms-api:1337"

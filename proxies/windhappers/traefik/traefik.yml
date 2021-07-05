@@ -1,0 +1,23 @@
+log:
+  level: "DEBUG"
+api:
+  dashboard: true
+providers:
+  file:
+    directory: "/etc/traefik/services"
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: "websecure"
+  websecure:
+    address: ":443"
+certificatesResolvers:
+  windhappers:
+    acme:
+      email: "operations@xsystems.org"
+      storage: "/etc/acme/windhappers.json"
+      dnsChallenge:
+        provider: "cloudflare"

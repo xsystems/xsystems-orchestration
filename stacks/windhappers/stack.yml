@@ -1,0 +1,114 @@
+version: '3.5'
+
+services:
+  client-web:
+    image: xsystems/windhappers-client-web:${CLIENT_WEB_VERSION}
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 60s
+    environment:
+      CLIENT_WEB_ENVIRONMENT: ${ENVIRONMENT}
+    networks:
+      - network
+
+  cms-api:
+    image: xsystems/windhappers-cms-api:${CMS_VERSION}
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 60s
+    environment:
+      - NODE_ENV=production
+      - CMS_API_JWT_SECRET
+      - CMS_API_UPLOAD_GS_BUCKET
+      - CMS_API_DATABASE_PASSWORD
+    secrets:
+      - source: gcp-credentials
+        target: gcp-credentials.json
+        mode: 0400
+    networks:
+      - network
+
+  cms-gui:
+    image: xsystems/windhappers-cms-gui:${CMS_VERSION}-${ENVIRONMENT}
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 60s
+    networks:
+      - network
+
+  postgres:
+    image: postgres:12.3-alpine
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 60s
+    environment:
+      - POSTGRES_PASSWORD
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - network
+    
+  postgres-gs-backup:
+    image: xsystems/postgres-gs-backup:1.1.0
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 60s
+    environment:
+      GCP_PROJECT: windhappers-web-application
+      GCP_BUCKET: ${POSTGRES_GS_BUCKET}
+      POSTGRES_HOST: postgres
+      POSTGRES_DATABASE: windhappers-cms
+    secrets:
+      - source: gcp-credentials
+        target: gcp-credentials.json
+        mode: 0400
+      - source: pgpass
+        target: .pgpass
+        mode: 0400
+    networks:
+      - network
+
+
+volumes:
+  postgres-data:
+    name: windhappers_postgres-data
+
+
+secrets:
+  gcp-credentials:
+    external: true
+    name: windhappers_gcp-credentials
+  pgpass:
+    external: true
+    name: windhappers_pgpass
+
+
+networks:
+  network:
+    driver: overlay
+    attachable: true

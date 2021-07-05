@@ -1,0 +1,13 @@
+http:
+  routers:
+    windhappers-client-web:
+      entrypoints: "websecure"
+      service: "windhappers-client-web"
+      rule: "Host(`acc.windhappers.nl`)"
+      tls:
+        certresolver: "xsystems"
+  services:
+    windhappers-client-web:
+      loadbalancer:
+        servers:
+          - url: "http://client-web:80"

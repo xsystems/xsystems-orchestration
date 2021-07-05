@@ -1,0 +1,13 @@
+http:
+  routers:
+    cms-api:
+      entrypoints: "websecure"
+      service: "cms-api"
+      rule: "Host(`{{ env "CMS_API_DOMAIN" }}`)"
+      tls:
+        certresolver: "windhappers"
+  services:
+    cms-api:
+      loadbalancer:
+        servers:
+          - url: "http://cms-api:1337"

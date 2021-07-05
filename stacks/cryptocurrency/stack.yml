@@ -1,0 +1,67 @@
+version: "3.8"
+
+services:
+  bitcoin:
+    image: "xsystems/bitcoin:0.20.1-r1_alpine3.13"
+    stop_grace_period: "3600s"
+    deploy:
+      mode: "replicated"
+      replicas: 1
+      restart_policy:
+        condition: "on-failure"
+        delay: "10s"
+        max_attempts: 3
+        window: "60s"
+    environment:
+      ZMQ_PUB_ADDRESSES: "tcp://blockbook:38330"
+    volumes:
+      - "bitcoin-data:/bitcoin/data"
+    networks:
+      - "network"
+
+  blockbook:
+    image: "xsystems/blockbook:v0.3.5"
+    stop_grace_period: 3600s
+    deploy:
+      mode: "replicated"
+      replicas: 1
+      restart_policy:
+        condition: "on-failure"
+        delay: "10s"
+        max_attempts: 3
+        window: "60s"
+    environment:
+      BITCOIN_HOST: "bitcoin"
+      BITCOIN_PORT_RPC: "8030"
+      BITCOIN_PORT_ZMQ: "38330"
+    volumes:
+      - "blockbook-data:/blockbook/data"
+    networks:
+      - "network"
+
+  trezor-suite:
+    image: "xsystems/trezor-suite:v21.5.1"
+    stop_grace_period: 3600s
+    deploy:
+      mode: "replicated"
+      replicas: 1
+      restart_policy:
+        condition: "on-failure"
+        delay: "10s"
+        max_attempts: 3
+        window: "60s"
+    networks:
+      - "network"
+
+
+volumes:
+  bitcoin-data:
+    external: true
+  blockbook-data:
+    external: true
+
+
+networks:
+  network:
+    driver: overlay
+    attachable: true
