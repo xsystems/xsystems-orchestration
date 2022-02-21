@@ -3,7 +3,7 @@ http:
     windhappers-client-web:
       entrypoints: "websecure"
       service: "windhappers-client-web"
-      rule: "Host(`acc.windhappers.nl`)"
+      rule: "Host(`acc.windhappers.nl`) || Host(`www.acc.windhappers.nl`)"
       tls:
         certresolver: "xsystems"
   services:

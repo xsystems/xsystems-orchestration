@@ -14,6 +14,10 @@ entryPoints:
           to: "websecure"
   websecure:
     address: ":443"
+  secure-mqtt:
+    address: ":8883"
+  openhab-lsp:
+    address: ":5007"
 certificatesResolvers:
   xsystems:
     acme:

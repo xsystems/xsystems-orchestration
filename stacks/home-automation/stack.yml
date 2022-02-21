@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+  openhab:
+    image: xsystems/openhab:latest
+    deploy:
+      mode: "replicated"
+      replicas: 1
+      restart_policy:
+        condition: "on-failure"
+        delay: "10s"
+        max_attempts: 3
+        window: "60s"
+    volumes:
+      - type: volume
+        source: openhab-addons
+        target: /openhab/addons
+        volume:
+          nocopy: true
+      - type: volume
+        source: openhab-conf
+        target: /openhab/conf
+        volume:
+          nocopy: true
+      - type: volume
+        source: openhab-userdata
+        target: /openhab/userdata
+        volume:
+          nocopy: true
+    networks:
+      - "network"
+  mqtt:
+    image: "xsystems/mqtt:0.2.0"
+    stop_grace_period: "3600s"
+    deploy:
+      mode: "replicated"
+      replicas: 1
+      restart_policy:
+        condition: "on-failure"
+        delay: "10s"
+        max_attempts: 3
+        window: "60s"
+    secrets:
+      - source: mosquitto-passwd
+        target: mosquitto.passwd
+    networks:
+      - "network"
+
+secrets:
+  mosquitto-passwd:
+    file: ./mosquitto.passwd
+
+volumes:
+  openhab-addons:
+    external: true
+  openhab-conf:
+    external: true
+  openhab-userdata:
+    external: true
+
+networks:
+  network:
+    driver: overlay
+    attachable: true

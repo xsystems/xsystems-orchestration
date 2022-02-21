@@ -1,0 +1,13 @@
+tcp:
+  routers:
+    mqtt:
+      entrypoints: "secure-mqtt"
+      service: "mqtt"
+      rule: "HostSNI(`mqtt.xsystems.org`)"
+      tls:
+        certresolver: "xsystems"
+  services:
+    mqtt:
+      loadbalancer:
+        servers:
+          - address: "mqtt:1883"

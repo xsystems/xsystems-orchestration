@@ -3,7 +3,7 @@ http:
     client-web:
       entrypoints: "websecure"
       service: "client-web"
-      rule: "Host(`{{ env "CLIENT_WEB_DOMAIN" }}`)"
+      rule: "Host(`{{ env "CLIENT_WEB_DOMAIN" }}`) || Host(`www.{{ env "CLIENT_WEB_DOMAIN" }}`)"
       tls:
         certresolver: "windhappers"
   services:

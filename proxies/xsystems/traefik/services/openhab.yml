@@ -1,0 +1,26 @@
+http:
+  routers:
+    openhab:
+      entrypoints: "websecure"
+      service: "openhab"
+      rule: "Host(`openhab.xsystems.org`)"
+      tls:
+        certresolver: "xsystems"
+  services:
+    openhab:
+      loadbalancer:
+        servers:
+          - url: "http://openhab:8080"
+tcp:
+  routers:
+    openhab:
+      entrypoints: "openhab-lsp"
+      service: "openhab"
+      rule: "HostSNI(`openhab.xsystems.org`)"
+      tls:
+        certresolver: "xsystems"
+  services:
+    openhab:
+      loadbalancer:
+        servers:
+          - address: "openhab:5007"
